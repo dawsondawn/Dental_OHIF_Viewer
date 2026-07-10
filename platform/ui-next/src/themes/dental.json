@@ -1,0 +1,36 @@
+{
+  "name": "dental",
+  "label": "Clinical: Dental",
+  "cssVars": {
+    "dark": {
+      "highlight": "184 88% 66%",
+      "neutral": "189 20% 57%",
+      "neutral-light": "185 42% 80%",
+      "neutral-dark": "193 26% 24%",
+      "background": "197 46% 5%",
+      "foreground": "180 18% 97%",
+      "card": "193 38% 10%",
+      "card-foreground": "180 18% 97%",
+      "popover": "192 48% 12%",
+      "popover-foreground": "180 18% 97%",
+      "primary": "184 82% 52%",
+      "primary-foreground": "196 44% 8%",
+      "secondary": "191 42% 31%",
+      "secondary-foreground": "184 48% 89%",
+      "muted": "193 38% 10%",
+      "muted-foreground": "188 28% 63%",
+      "accent": "186 58% 18%",
+      "accent-foreground": "180 18% 97%",
+      "destructive": "0 67% 38%",
+      "destructive-foreground": "0 0% 98%",
+      "border": "190 29% 19%",
+      "input": "192 37% 24%",
+      "ring": "184 82% 52%",
+      "chart-1": "184 78% 52%",
+      "chart-2": "151 56% 47%",
+      "chart-3": "34 85% 57%",
+      "chart-4": "208 72% 58%",
+      "chart-5": "327 75% 59%"
+    }
+  }
+}

@@ -227,19 +227,32 @@ export default function ModeRoute({
       // this mode's id / routeName so a single mode can override the general one.
       customizationService.applyModeCustomizations([mode.id, mode.routeName]);
 
-      // use the URL hangingProtocolId if it exists, otherwise use the one
-      // defined in the mode configuration
-      const hangingProtocolIdToUse = hangingProtocolService.getProtocolById(
-        runTimeHangingProtocolId
-      )
-        ? runTimeHangingProtocolId
-        : hangingProtocol;
+      const DENTAL_PROTOCOL_ID = '@ohif/hpDental';
+      const DENTAL_STAGE_ID = 'dental-2x2';
+
+      const safeGetProtocolById = (protocolId: string) => {
+        try {
+          return hangingProtocolService.getProtocolById(protocolId);
+        } catch {
+          return null;
+        }
+      };
+
+      const hasDentalProtocol = !!safeGetProtocolById(DENTAL_PROTOCOL_ID);
+
+      // Dental build: always prefer the dental protocol at route init.
+      // Fallback preserves existing runtime/mode behavior if dental is unavailable.
+      const hangingProtocolIdToUse = hasDentalProtocol
+        ? DENTAL_PROTOCOL_ID
+        : safeGetProtocolById(runTimeHangingProtocolId)
+          ? runTimeHangingProtocolId
+          : hangingProtocol;
 
       // Determine the index of the stageId if the hangingProtocolIdToUse is defined
       const stageIndex = Array.isArray(hangingProtocolIdToUse)
         ? -1
         : hangingProtocolService.getStageIndex(hangingProtocolIdToUse, {
-            stageId: runTimeStageId || undefined,
+            stageId: hasDentalProtocol ? DENTAL_STAGE_ID : runTimeStageId || undefined,
           });
       // Ensure that the stage index is never negative
       // If stageIndex is negative (e.g., if stage wasn't found), use 0 as the default

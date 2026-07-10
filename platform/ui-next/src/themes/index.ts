@@ -1,6 +1,7 @@
 import orchid from './orchid.json';
 import arctic from './arctic.json';
 import verdant from './verdant.json';
+import dental from './dental.json';
 import midnight from './midnight.json';
 import slate from './slate.json';
 import deep from './deep.json';
@@ -13,4 +14,4 @@ export interface ThemePreset {
   };
 }
 
-export const themePresets: ThemePreset[] = [orchid, arctic, verdant, midnight, slate, deep];
+export const themePresets: ThemePreset[] = [orchid, arctic, verdant, dental, midnight, slate, deep];

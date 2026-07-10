@@ -2,13 +2,11 @@ import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 
-import { Button, Header, Icons, useModal } from '@ohif/ui-next';
+import { useModal, useActiveTheme } from '@ohif/ui-next';
 import { useSystem } from '@ohif/core';
-import { Toolbar } from '../Toolbar/Toolbar';
-import HeaderPatientInfo from './HeaderPatientInfo';
-import { PatientInfoVisibility } from './HeaderPatientInfo/HeaderPatientInfo';
 import { preserveQueryParameters } from '@ohif/app';
 import { Types } from '@ohif/core';
+import DentalModeHeader from './DentalModeHeader';
 
 function ViewerHeader({ appConfig }: withAppTypes<{ appConfig: AppTypes.Config }>) {
   const { servicesManager, extensionManager, commandsManager } = useSystem();
@@ -38,16 +36,21 @@ function ViewerHeader({ appConfig }: withAppTypes<{ appConfig: AppTypes.Config }
 
   const { t } = useTranslation();
   const { show } = useModal();
+  const { setActiveTheme } = useActiveTheme();
 
-  const AboutModal = customizationService.getCustomization(
+  React.useEffect(() => {
+    setActiveTheme('dental');
+  }, [setActiveTheme]);
+
+  const AboutModal = customizationService?.getCustomization(
     'ohif.aboutModal'
   ) as Types.MenuComponentCustomization;
 
-  const AppearanceModal = customizationService.getCustomization(
+  const AppearanceModal = customizationService?.getCustomization(
     'ohif.appearanceModal'
   ) as Types.MenuComponentCustomization;
 
-  const UserPreferencesModal = customizationService.getCustomization(
+  const UserPreferencesModal = customizationService?.getCustomization(
     'ohif.userPreferencesModal'
   ) as Types.MenuComponentCustomization;
 
@@ -63,12 +66,12 @@ function ViewerHeader({ appConfig }: withAppTypes<{ appConfig: AppTypes.Config }
         }),
     },
     {
-      title: UserPreferencesModal.menuTitle ?? t('Header:Preferences'),
+      title: UserPreferencesModal?.menuTitle ?? t('Header:Preferences'),
       icon: 'settings',
       onClick: () =>
         show({
           content: UserPreferencesModal,
-          title: UserPreferencesModal.title ?? t('UserPreferencesModal:User preferences'),
+          title: UserPreferencesModal?.title ?? t('UserPreferencesModal:User preferences'),
           containerClassName:
             UserPreferencesModal?.containerClassName ?? 'flex max-w-4xl p-6 flex-col',
         }),
@@ -99,49 +102,13 @@ function ViewerHeader({ appConfig }: withAppTypes<{ appConfig: AppTypes.Config }
   }
 
   return (
-    <Header
-      menuOptions={menuOptions}
+    <DentalModeHeader
+      appConfig={appConfig}
+      servicesManager={servicesManager}
       isReturnEnabled={!!appConfig.showStudyList}
       onClickReturnButton={onClickReturnButton}
-      WhiteLabeling={appConfig.whiteLabeling}
-      Secondary={<Toolbar buttonSection="secondary" />}
-      PatientInfo={
-        appConfig.showPatientInfo !== PatientInfoVisibility.DISABLED && (
-          <HeaderPatientInfo
-            servicesManager={servicesManager}
-            appConfig={appConfig}
-          />
-        )
-      }
-      UndoRedo={
-        <div className="text-primary flex cursor-pointer items-center">
-          <Button
-            variant="ghost"
-            className="hover:bg-muted"
-            data-cy="undo-btn"
-            onClick={() => {
-              commandsManager.run('undo');
-            }}
-          >
-            <Icons.Undo className="" />
-          </Button>
-          <Button
-            variant="ghost"
-            className="hover:bg-muted"
-            data-cy="redo-btn"
-            onClick={() => {
-              commandsManager.run('redo');
-            }}
-          >
-            <Icons.Redo className="" />
-          </Button>
-        </div>
-      }
-    >
-      <div className="relative flex justify-center gap-[4px]">
-        <Toolbar buttonSection="primary" />
-      </div>
-    </Header>
+      menuOptions={menuOptions}
+    />
   );
 }
 

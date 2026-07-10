@@ -11,7 +11,7 @@ const configs = {
 const ohif = {
   layout: '@ohif/extension-default.layoutTemplateModule.viewerLayout',
   sopClassHandler: '@ohif/extension-default.sopClassHandlerModule.stack',
-  measurements: '@ohif/extension-cornerstone.panelModule.panelMeasurement',
+  measurements: '@ohif/extension-cornerstone.panelModule.dentalMeasurements',
   thumbnailList: '@ohif/extension-default.panelModule.seriesList',
 };
 
@@ -78,6 +78,7 @@ function modeFactory({ modeConfiguration }) {
         ],
         passive: [
           { toolName: toolNames.Length },
+          { toolName: toolNames.Angle },
           { toolName: toolNames.Bidirectional },
           { toolName: toolNames.Probe },
           { toolName: toolNames.EllipticalROI },

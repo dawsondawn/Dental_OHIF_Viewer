@@ -105,9 +105,9 @@ export function StudyListSettingsPopover() {
   const items: SettingsMenuItem[] =
     typeof buildItems === 'function'
       ? (() => {
-          const result = (
-            buildItems as (defaults: SettingsMenuItem[]) => SettingsMenuItem[]
-          )(defaults);
+          const result = (buildItems as (defaults: SettingsMenuItem[]) => SettingsMenuItem[])(
+            defaults
+          );
           return Array.isArray(result) ? result : defaults;
         })()
       : defaults;

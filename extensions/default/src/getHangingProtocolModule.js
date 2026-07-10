@@ -2,6 +2,7 @@ import { hpMN, hpMN8 } from './hangingprotocols/hpMNGrid';
 import hpMNCompare from './hangingprotocols/hpCompare';
 import hpMammography from './hangingprotocols/hpMammo';
 import hpScale from './hangingprotocols/hpScale';
+import hpDental from './hangingprotocols/hpDental';
 
 const defaultProtocol = {
   id: 'default',
@@ -139,6 +140,10 @@ function getHangingProtocolModule() {
     {
       name: hpScale.id,
       protocol: hpScale,
+    },
+    {
+      name: hpDental.id,
+      protocol: hpDental,
     },
     // Create a MxN hanging protocol available by default
     {

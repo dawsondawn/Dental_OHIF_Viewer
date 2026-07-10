@@ -4,18 +4,19 @@ import { Toolbox } from '@ohif/extension-default';
 import PanelSegmentation from './panels/PanelSegmentation';
 import ActiveViewportWindowLevel from './components/ActiveViewportWindowLevel';
 import PanelMeasurement from './panels/PanelMeasurement';
+import DentalMeasurementsPanel from './panels/DentalMeasurementsPanel';
 import { SegmentationRepresentations } from '@cornerstonejs/tools/enums';
 import i18n from '@ohif/i18n';
 
 const getPanelModule = ({ commandsManager, servicesManager, extensionManager }: withAppTypes) => {
-  const { toolbarService } = servicesManager.services;
+  const { toolbarService } = servicesManager?.services ?? {};
 
   const toolSectionMap = {
-    [SegmentationRepresentations.Labelmap]: toolbarService.sections.labelMapSegmentationToolbox,
-    [SegmentationRepresentations.Contour]: toolbarService.sections.contourSegmentationToolbox,
+    [SegmentationRepresentations.Labelmap]: toolbarService?.sections.labelMapSegmentationToolbox,
+    [SegmentationRepresentations.Contour]: toolbarService?.sections.contourSegmentationToolbox,
   };
 
-  const wrappedPanelSegmentation = props => {
+  const wrappedPanelSegmentation = (props: any) => {
     return (
       <PanelSegmentation
         commandsManager={commandsManager}
@@ -29,7 +30,7 @@ const getPanelModule = ({ commandsManager, servicesManager, extensionManager }: 
     );
   };
 
-  const wrappedPanelSegmentationNoHeader = props => {
+  const wrappedPanelSegmentationNoHeader = (props: any) => {
     return (
       <PanelSegmentation
         commandsManager={commandsManager}
@@ -43,7 +44,7 @@ const getPanelModule = ({ commandsManager, servicesManager, extensionManager }: 
     );
   };
 
-  const wrappedPanelSegmentationWithTools = props => {
+  const wrappedPanelSegmentationWithTools = (props: any) => {
     const { t } = useTranslation('SegmentationPanel');
     const tKey = `${props.segmentationRepresentationTypes?.[0] ?? 'Segmentation'} tools`;
     const tValue = t(tKey);
@@ -51,7 +52,11 @@ const getPanelModule = ({ commandsManager, servicesManager, extensionManager }: 
     return (
       <>
         <Toolbox
-          buttonSectionId={toolSectionMap[props.segmentationRepresentationTypes?.[0]]}
+          buttonSectionId={
+            toolSectionMap[
+              props.segmentationRepresentationTypes?.[0] as keyof typeof toolSectionMap
+            ] ?? ''
+          }
           title={tValue}
         />
         <PanelSegmentation
@@ -78,8 +83,15 @@ const getPanelModule = ({ commandsManager, servicesManager, extensionManager }: 
       name: 'panelMeasurement',
       iconName: 'tab-linear',
       iconLabel: 'Measure',
-      label: 'Measurement',
-      component: PanelMeasurement,
+      label: 'Measurements',
+      component: DentalMeasurementsPanel,
+    },
+    {
+      name: 'dentalMeasurements',
+      iconName: 'tab-linear',
+      iconLabel: 'Measure',
+      label: 'Measurements',
+      component: DentalMeasurementsPanel,
     },
     {
       name: 'panelSegmentation',
@@ -100,7 +112,7 @@ const getPanelModule = ({ commandsManager, servicesManager, extensionManager }: 
       iconName: 'tab-segmentation',
       iconLabel: 'Segmentation',
       label: i18n.t('SegmentationPanel:Labelmap'),
-      component: props =>
+      component: (props: any) =>
         wrappedPanelSegmentationWithTools({
           ...props,
           segmentationRepresentationTypes: [
@@ -114,7 +126,7 @@ const getPanelModule = ({ commandsManager, servicesManager, extensionManager }: 
       iconName: 'tab-contours',
       iconLabel: 'Segmentation',
       label: i18n.t('SegmentationPanel:Contour'),
-      component: props =>
+      component: (props: any) =>
         wrappedPanelSegmentationWithTools({
           ...props,
           segmentationRepresentationTypes: [SegmentationRepresentations.Contour],

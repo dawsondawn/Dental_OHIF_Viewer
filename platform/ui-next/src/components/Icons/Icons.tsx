@@ -8,6 +8,7 @@ import Code from './Sources/Code';
 import ColorChange from './Sources/ColorChange';
 import Controls from './Sources/Controls';
 import Copy from './Sources/Copy';
+import DentalTheme from './Sources/DentalTheme';
 import Delete from './Sources/Delete';
 import DicomTagBrowser from './Sources/DicomTagBrowser';
 import DisplayFillAndOutline from './Sources/DisplayFillAndOutline';
@@ -490,6 +491,7 @@ export const Icons = {
   ColorChange,
   Controls,
   Copy,
+  DentalTheme,
   Delete,
   DicomTagBrowser,
   DisplayFillAndOutline,

@@ -28,6 +28,7 @@
     "dev:orthanc:no:cache": "pnpm --filter @ohif/app run dev:orthanc:no:cache",
     "dev:dcm4chee": "pnpm --filter @ohif/app run dev:dcm4chee",
     "dev:static": "pnpm --filter @ohif/app run dev:static",
+    "dev:dental-backend": "pnpm --filter @ohif/dental-measurements-backend run dev",
     "orthanc:up": "docker compose -f platform/app/.recipes/Nginx-Orthanc/docker-compose.yml up",
     "install:update-lockfile": "pnpm install --no-frozen-lockfile",
     "install:frozen": "pnpm install --frozen-lockfile",

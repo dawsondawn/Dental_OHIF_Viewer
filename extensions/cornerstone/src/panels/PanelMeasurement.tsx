@@ -1,7 +1,6 @@
 import React from 'react';
 
-import { useMeasurements } from '../hooks/useMeasurements';
-import StudyMeasurements from '../components/StudyMeasurements';
+import DentalMeasurementsPanel from './DentalMeasurementsPanel';
 /**
  * The PanelMeasurement is a fairly simple wrapper that gets the filtered
  * measurements and then passes it on to the children component, default to
@@ -57,28 +56,5 @@ import StudyMeasurements from '../components/StudyMeasurements';
  *```
  */
 export default function PanelMeasurement(props): React.ReactNode {
-  const { measurementFilter, emptyComponent: EmptyComponent, children } = props;
-
-  const displayMeasurements = useMeasurements({ measurementFilter });
-
-  if (!displayMeasurements.length) {
-    return EmptyComponent ? (
-      <EmptyComponent items={displayMeasurements} />
-    ) : (
-      <span className="text-foreground">No Measurements</span>
-    );
-  }
-
-  if (children) {
-    const cloned = React.Children.map(children, child =>
-      React.cloneElement(child, {
-        items: displayMeasurements,
-        filter: measurementFilter,
-      })
-    );
-    return cloned;
-  }
-
-  // Need to merge defaults on the content props to ensure they get passed to children
-  return <StudyMeasurements items={displayMeasurements} />;
+  return <DentalMeasurementsPanel />;
 }

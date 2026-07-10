@@ -97,16 +97,12 @@ function injectCustomStyles(vars: string[]) {
 
 export function ActiveThemeProvider({ children }: { children: React.ReactNode }) {
   const [activeTheme, setActiveThemeState] = React.useState<string>(() => {
-    if (typeof window === 'undefined') return 'default';
+    if (typeof window === 'undefined') return 'dental';
     const urlTheme = new URLSearchParams(window.location.search).get('theme');
     if (isValidUrlTheme(urlTheme)) return urlTheme;
 
-    // Validate the stored value the same way the URL param is validated — a stale
-    // key (renamed preset, older build) must not become a theme-* body class.
-    const stored = localStorage.getItem(STORAGE_KEY_THEME);
-    if (!stored || !VALID_THEMES.has(stored)) return 'default';
-    if (stored === 'custom' && !localStorage.getItem(STORAGE_KEY_CUSTOM_CSS)) return 'default';
-    return stored;
+    // Dental build defaults to dental theme on startup.
+    return 'dental';
   });
 
   const [customCss, setCustomCssState] = React.useState<string>(() => {

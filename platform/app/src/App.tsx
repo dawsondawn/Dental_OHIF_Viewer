@@ -132,8 +132,15 @@ function App({
   // Loop through and register each of the service providers registered with the ServiceProvidersManager.
   const providersFromManager = Object.entries(serviceProvidersManager.providers);
   if (providersFromManager.length > 0) {
+    const modalProviderIndex = providers.findIndex(([Comp]) => Comp === ModalProvider);
+    let insertionIndex = modalProviderIndex === -1 ? providers.length : modalProviderIndex;
+
     providersFromManager.forEach(([serviceName, provider]) => {
-      providers.push([provider, { service: servicesManager.services[serviceName] }]);
+      providers.splice(insertionIndex, 0, [
+        provider,
+        { service: servicesManager.services[serviceName] },
+      ]);
+      insertionIndex += 1;
     });
   }
 

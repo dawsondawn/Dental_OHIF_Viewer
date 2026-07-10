@@ -20,15 +20,9 @@ export default function init({
   serviceProvidersManager,
   appConfig,
 }: withAppTypes): void {
-  const hasThemeModule =
-    Array.isArray(appConfig.customizationService) &&
-    appConfig.customizationService.some(
-      ref => typeof ref === 'string' && ref.includes('customizationModule.theme')
-    );
-
-  if (hasThemeModule) {
-    serviceProvidersManager.registerProvider('activeTheme', ActiveThemeProvider);
-  }
+  // Register unconditionally so any customization that uses useActiveTheme
+  // is safe regardless of how customizationService is shaped in config.
+  serviceProvidersManager.registerProvider('activeTheme', ActiveThemeProvider);
   const { toolbarService, cineService, viewportGridService } = servicesManager.services;
 
   toolbarService.registerEventForToolbarUpdate(cineService, [
