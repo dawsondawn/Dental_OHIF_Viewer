@@ -29,8 +29,25 @@ async function ensureDataFile() {
 async function readRecords() {
   await ensureDataFile();
   const raw = await readFile(DATA_FILE, 'utf-8');
-  const parsed = JSON.parse(raw);
-  return Array.isArray(parsed) ? parsed : [];
+
+  if (!raw.trim()) {
+    await writeFile(DATA_FILE, '[]', 'utf-8');
+    return [];
+  }
+
+  try {
+    const parsed = JSON.parse(raw);
+
+    if (Array.isArray(parsed)) {
+      return parsed;
+    }
+
+    await writeFile(DATA_FILE, '[]', 'utf-8');
+    return [];
+  } catch {
+    await writeFile(DATA_FILE, '[]', 'utf-8');
+    return [];
+  }
 }
 
 async function writeRecords(records) {

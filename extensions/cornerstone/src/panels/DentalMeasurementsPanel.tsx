@@ -96,6 +96,35 @@ function compareMeasurements(a: any, b: any, sortBy: string) {
   }
 }
 
+function toPersistableMeasurement(measurement: any) {
+  if (!measurement || typeof measurement !== 'object') {
+    return null;
+  }
+
+  const points = Array.isArray(measurement.points)
+    ? measurement.points
+        .filter((point: any) => Array.isArray(point) && point.length >= 2)
+        .map((point: any) => point.slice(0, 3).map((value: any) => Number(value) || 0))
+    : [];
+
+  return {
+    uid: measurement.uid,
+    label: measurement.label,
+    toolName: measurement.toolName,
+    referenceStudyUID: measurement.referenceStudyUID,
+    referenceSeriesUID: measurement.referenceSeriesUID,
+    displaySetInstanceUID: measurement.displaySetInstanceUID,
+    referencedImageId: measurement.referencedImageId,
+    data: measurement.data,
+    metadata: measurement.metadata,
+    points,
+    textBox: measurement.textBox,
+    frameNumber: measurement.frameNumber,
+    FrameOfReferenceUID: measurement.FrameOfReferenceUID,
+    predecessorImageId: measurement.predecessorImageId,
+  };
+}
+
 export default function DentalMeasurementsPanel() {
   const { servicesManager, commandsManager } = useSystem();
   const measurementService = servicesManager.services.measurementService!;
@@ -171,6 +200,11 @@ export default function DentalMeasurementsPanel() {
 
     return [...filteredMeasurements].sort((a, b) => compareMeasurements(a, b, sortBy));
   }, [measurements, searchTerm, sortBy]);
+
+  const persistableMeasurements = React.useMemo(
+    () => measurements.map(toPersistableMeasurement).filter(Boolean),
+    [measurements]
+  );
 
   const activatePreset = (preset: DentalMeasurementPreset) => {
     setActivePreset(preset);
@@ -255,6 +289,28 @@ export default function DentalMeasurementsPanel() {
           return;
         }
 
+        const studyInstanceUID = savedMeasurements.find(
+          measurement => measurement?.referenceStudyUID
+        )?.referenceStudyUID;
+        const seriesInstanceUIDs = Array.from(
+          new Set(
+            savedMeasurements
+              .map(measurement => measurement?.referenceSeriesUID)
+              .filter((value): value is string => typeof value === 'string' && value.length > 0)
+          )
+        );
+
+        if (studyInstanceUID && seriesInstanceUIDs.length > 0) {
+          try {
+            commandsManager.runCommand('restoreTrackedSeries', {
+              StudyInstanceUID: studyInstanceUID,
+              SeriesInstanceUIDs: seriesInstanceUIDs,
+            });
+          } catch {
+            // Tracking extension may not be active in all modes.
+          }
+        }
+
         isHydratingRef.current = true;
         let restoredCount = 0;
 
@@ -335,10 +391,10 @@ export default function DentalMeasurementsPanel() {
     return () => {
       isCancelled = true;
     };
-  }, [measurementService, measurements.length]);
+  }, [commandsManager, measurementService, measurements.length]);
 
   React.useEffect(() => {
-    const snapshot = JSON.stringify(measurements);
+    const snapshot = JSON.stringify(persistableMeasurements);
 
     if (!hasMountedRef.current) {
       hasMountedRef.current = true;
@@ -349,7 +405,7 @@ export default function DentalMeasurementsPanel() {
       return;
     }
 
-    if (!measurements.length || snapshot === lastSavedSnapshotRef.current) {
+    if (!persistableMeasurements.length || snapshot === lastSavedSnapshotRef.current) {
       return;
     }
 
@@ -370,17 +426,24 @@ export default function DentalMeasurementsPanel() {
           },
           body: JSON.stringify({
             source: 'dental-panel',
-            measurements,
+            measurements: persistableMeasurements,
           }),
         });
 
         if (!response.ok) {
-          throw new Error(`Auto-save failed with status ${response.status}`);
+          const responseText = await response.text();
+          throw new Error(
+            `Auto-save failed with status ${response.status}${
+              responseText ? `: ${responseText}` : ''
+            }`
+          );
         }
 
         lastSavedSnapshotRef.current = snapshot;
         setSaveStatus(
-          `Auto-saved ${measurements.length} measurement${measurements.length === 1 ? '' : 's'}`
+          `Auto-saved ${persistableMeasurements.length} measurement${
+            persistableMeasurements.length === 1 ? '' : 's'
+          }`
         );
       } catch (error) {
         setSaveStatus(error instanceof Error ? error.message : 'Unable to auto-save measurements');
@@ -395,7 +458,7 @@ export default function DentalMeasurementsPanel() {
       isCancelled = true;
       window.clearTimeout(timeoutId);
     };
-  }, [measurements]);
+  }, [persistableMeasurements]);
 
   return (
     <div className="flex h-full flex-col gap-3 p-3">
@@ -445,8 +508,10 @@ export default function DentalMeasurementsPanel() {
         Export JSON
       </Button>
 
-      {/* {isSaving ? <div className="text-muted-foreground text-xs">Auto-saving...</div> : null} */}
-      {/* {!isSaving && saveStatus ? <div className="text-muted-foreground text-xs">{saveStatus}</div> : null} */}
+      {isSaving ? <div className="text-muted-foreground text-xs">Auto-saving...</div> : null}
+      {!isSaving && saveStatus ? (
+        <div className="text-muted-foreground text-xs">{saveStatus}</div>
+      ) : null}
       {/* </div> */}
 
       <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
