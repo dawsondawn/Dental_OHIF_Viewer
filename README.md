@@ -8,8 +8,9 @@ Periapical length, Canal Angle, Crown Width, and Root Length
 Export JSON button is added to download the measurements added on the study
 
 ## Run
+```bash
 npm run start
-
+```
 
 # Dental Measurements Backend
 
