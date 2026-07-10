@@ -17,9 +17,6 @@ npm run start
 Small isolated backend service to persist dental measurements from the panel.
 
 ## Run
-
-From the repository root:
-
 ```bash
 pnpm --filter @ohif/dental-measurements-backend run dev
 ```
